@@ -1,0 +1,31 @@
+{
+  "name": "onebutton-landing",
+  "version": "1.0.0",
+  "description": "OneButton - Minimal AI meeting companion landing page",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "landing-page",
+    "onebutton",
+    "meeting",
+    "transcription"
+  ],
+  "author": "OneButton",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "stylelint": "^16.26.1",
+    "vite": "^5.0.8"
+  }
+}

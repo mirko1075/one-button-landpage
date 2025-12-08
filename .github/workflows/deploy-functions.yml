@@ -1,0 +1,44 @@
+name: Deploy Supabase Functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "supabase/functions/**"
+
+jobs:
+  deploy-functions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: |
+          curl -sL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz \
+            | tar -xz -C /usr/local/bin
+
+      - name: Supabase login
+        run: supabase login --token ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Link project
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_ID }}"
+
+      - name: Deploy functions (public_* with no-verify-jwt)
+        run: |
+          echo "Deploying Supabase functions. Functions starting with 'public_' will use --no-verify-jwt"
+          for fn in supabase/functions/*; do
+            if [ -d "$fn" ]; then
+              name=$(basename "$fn")
+              if [[ "$name" == public_* ]]; then
+                echo "-> Deploying function: $name (no-verify-jwt)"
+                supabase functions deploy "$name" --no-verify-jwt
+              else
+                echo "-> Deploying function: $name (with JWT verification)"
+                supabase functions deploy "$name"
+              fi
+            fi
+          done
+
