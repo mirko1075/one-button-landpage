@@ -923,6 +923,10 @@ section {
 .section-container {
   max-width: 1200px;
   margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .section-container-narrow {
@@ -1428,6 +1432,7 @@ section {
   padding: 4rem 1.5rem;
   background: var(--white);
   text-align: center;
+  height: 85vh;
 }
 
 .payoff-title {
