@@ -12,6 +12,39 @@
   box-sizing: border-box;
 }
 
+/* Small mobile overrides (iPhone 13 / <= 480px) */
+@media (max-width: 480px) {
+  .hero {
+    padding: 2rem 12px 1.5rem;
+  }
+
+  .hero-container {
+    gap: 1rem;
+    padding: 0 6px;
+  }
+
+  .hero-phone {
+    max-width: 220px;
+    transform: translateY(-10px);
+  }
+
+  .phone-mockup {
+    max-width: 220px;
+  }
+
+  .join-btn {
+    margin: 0 12px;
+  }
+
+  .hero-left {
+    gap: 0.75rem;
+  }
+
+  .hero-right {
+    margin-top: 24px;
+  }
+}
+
 :root {
   --black: #000000;
   --white: #ffffff;
@@ -160,6 +193,16 @@ body {
   align-items: center;
   gap: 2rem;
   width: 100%;
+}
+
+/* Wrapper for the phone mockup inside the hero */
+.hero-phone {
+  max-width: 260px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-left {
@@ -1046,6 +1089,62 @@ section {
   color: var(--black);
 }
 
+.one-tap-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: nowrap;
+}
+
+.flow-box {
+  background: var(--white);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-card);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--black);
+  min-width: 92px;
+  text-align: center;
+}
+
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-600);
+  padding: 4px;
+}
+
+.flow-arrow .connector {
+  height: 2px;
+  background: rgba(0,0,0,0.06);
+  display: inline-block;
+  width: 28px;
+  margin-right: 6px;
+  border-radius: 1px;
+}
+
+@media (max-width: 680px) {
+  .one-tap-flow {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-box {
+    min-width: 140px;
+  }
+  .flow-arrow {
+    transform: rotate(90deg);
+    padding: 6px 0;
+  }
+  .flow-arrow .connector {
+    width: 40px;
+  }
+}
+
 .flow-arrow {
   font-size: 2rem;
   color: var(--gray-400);
@@ -1124,6 +1223,130 @@ section {
   font-weight: 400;
   line-height: 1.6;
   color: var(--gray-600);
+}
+
+/* --------------------------------------------------------
+   SITUATIONS SECTION (MOBILE-FIRST)
+---------------------------------------------------------*/
+
+.situations-section {
+  padding: 4rem 1.5rem;
+  background: var(--white);
+}
+
+.situations-subtitle {
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 450;
+  line-height: 1.5;
+  color: var(--gray-600);
+  margin-bottom: 2.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.situations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.situation-card {
+  perspective: 1000px;
+  height: 280px;
+  cursor: pointer;
+}
+
+.situation-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.situation-card.flipped .situation-card-inner {
+  transform: rotateY(180deg);
+}
+
+.situation-card-front,
+.situation-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.situation-card-front {
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+}
+
+.situation-card-back {
+  background: var(--gray-50);
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+}
+
+.situation-image {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.situation-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.situation-card:hover .situation-image img {
+  transform: scale(1.05);
+}
+
+.situation-card-front .situation-title {
+  padding: 1rem 0.875rem;
+  font-size: 0.938rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  line-height: 1.3;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.situation-back-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.situation-card-back .situation-title {
+  font-size: 0.938rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  margin-bottom: 0.25rem;
+}
+
+.situation-description {
+  font-size: 0.813rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--gray-700);
 }
 
 /* --------------------------------------------------------
@@ -1778,6 +2001,42 @@ section {
 
   .feature-card {
     padding: 2rem;
+  }
+
+  /* SITUATIONS */
+  .situations-section {
+    padding: 8rem 2rem;
+  }
+
+  .situations-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  .situations-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .situation-card {
+    height: 420px;
+  }
+
+  .situation-image {
+    height: 280px;
+  }
+
+  .situation-card-front .situation-title {
+    font-size: 1.375rem;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .situation-card-back .situation-title {
+    font-size: 1.375rem;
+  }
+
+  .situation-description {
+    font-size: 1.125rem;
   }
 
   /* AUTOMATIONS */

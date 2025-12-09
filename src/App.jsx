@@ -12,6 +12,7 @@ import Roadmap from './components/Roadmap';
 import Waitlist from './components/Waitlist';
 import FinalPayoff from './components/FinalPayoff';
 import Footer from './components/Footer';
+import SituationsSection from './components/SituationsSection';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <OneTap />
         <Features />
         <WhyDifferent />
+        <SituationsSection />
         <MarketContext />
         <Roadmap />
         <Waitlist />
