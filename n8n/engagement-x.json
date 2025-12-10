@@ -1,0 +1,127 @@
+{
+  "name": "InOneButton - Engage with Relevant Tweets",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Every 2 Hours",
+      "type": "n8n-nodes-base.cron",
+      "position": [260, 240],
+      "parameters": {
+        "triggerTimes": [
+          {
+            "hour": "*",
+            "minute": "0/120"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "Search Tweets",
+      "type": "n8n-nodes-base.twitter",
+      "position": [510, 240],
+      "parameters": {
+        "operation": "search",
+        "resource": "tweet",
+        "query": "\"meetings\" OR \"productivity\" OR \"cognitive load\" OR \"remote work\" lang:en -is:retweet",
+        "returnAll": false,
+        "limit": 5
+      },
+      "credentials": {
+        "twitterOAuth1Api": "__TWITTER_CREDENTIAL_ID__"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Like Tweet",
+      "type": "n8n-nodes-base.twitter",
+      "position": [770, 140],
+      "parameters": {
+        "operation": "like",
+        "resource": "tweet",
+        "tweetId": "={{ $json[\"id\"] }}"
+      },
+      "credentials": {
+        "twitterOAuth1Api": "__TWITTER_CREDENTIAL_ID__"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Generate Reply",
+      "type": "n8n-nodes-base.openAi",
+      "position": [770, 330],
+      "parameters": {
+        "operation": "chatCompletion",
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You create short, thoughtful founder-style replies... (SYSTEM PROMPT PER LE RISPOSTE)"
+          },
+          {
+            "role": "user",
+            "content": "Write a smart reply to this tweet: {{$json[\"text\"]}}"
+          }
+        ]
+      },
+      "credentials": {
+        "openAIApi": "__OPENAI_CREDENTIAL_ID__"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Reply to Tweet",
+      "type": "n8n-nodes-base.twitter",
+      "position": [1040, 330],
+      "parameters": {
+        "operation": "reply",
+        "resource": "tweet",
+        "tweetId": "={{ $json[\"id\"] }}",
+        "text": "={{ $json[\"choices\"][0][\"message\"][\"content\"] }}"
+      },
+      "credentials": {
+        "twitterOAuth1Api": "__TWITTER_CREDENTIAL_ID__"
+      }
+    }
+  ],
+  "connections": {
+    "Every 2 Hours": {
+      "main": [
+        [
+          {
+            "node": "Search Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Tweets": {
+      "main": [
+        [
+          {
+            "node": "Like Tweet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Reply": {
+      "main": [
+        [
+          {
+            "node": "Reply to Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

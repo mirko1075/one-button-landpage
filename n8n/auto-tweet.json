@@ -1,0 +1,80 @@
+{
+  "name": "InOneButton - Daily Auto Tweet",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.cron",
+      "position": [280, 260],
+      "parameters": {
+        "triggerTimes": [
+          {
+            "hour": 9,
+            "minute": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "Generate Tweet",
+      "type": "n8n-nodes-base.openAi",
+      "position": [550, 260],
+      "parameters": {
+        "operation": "chatCompletion",
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a researcher + strategist + founder-style copywriter generating short, high-impact X posts... (INCLUDE IL SYSTEM PROMPT CHE TI HO DATO QUI)"
+          },
+          {
+            "role": "user",
+            "content": "Generate one short, founder-style X post... (INCLUDE IL USER PROMPT CHE TI HO DATO QUI)"
+          }
+        ]
+      },
+      "credentials": {
+        "openAIApi": "__OPENAI_CREDENTIAL_ID__"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Post Tweet",
+      "type": "n8n-nodes-base.twitter",
+      "position": [820, 260],
+      "parameters": {
+        "operation": "create",
+        "resource": "tweet",
+        "text": "={{ $json[\"choices\"][0][\"message\"][\"content\"] }}"
+      },
+      "credentials": {
+        "twitterOAuth1Api": "__TWITTER_CREDENTIAL_ID__"
+      }
+    }
+  ],
+  "connections": {
+    "Daily Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Tweet": {
+      "main": [
+        [
+          {
+            "node": "Post Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

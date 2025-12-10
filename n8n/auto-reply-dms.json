@@ -1,0 +1,107 @@
+{
+  "name": "InOneButton - Auto Reply to Mentions",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Check Mentions (Every 5 min)",
+      "type": "n8n-nodes-base.cron",
+      "position": [250, 230],
+      "parameters": {
+        "triggerTimes": [
+          {
+            "hour": "*",
+            "minute": "*/5"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "Get Mentions",
+      "type": "n8n-nodes-base.twitter",
+      "position": [520, 230],
+      "parameters": {
+        "operation": "getMentions",
+        "resource": "tweet",
+        "returnAll": false,
+        "limit": 10
+      },
+      "credentials": {
+        "twitterOAuth1Api": "__TWITTER_CREDENTIAL_ID__"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Generate Reply",
+      "type": "n8n-nodes-base.openAi",
+      "position": [790, 230],
+      "parameters": {
+        "operation": "chatCompletion",
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You reply to mentions with a concise, thoughtful founder-style tone..."
+          },
+          {
+            "role": "user",
+            "content": "Reply to this mention: {{$json[\"text\"]}}"
+          }
+        ]
+      },
+      "credentials": {
+        "openAIApi": "__OPENAI_CREDENTIAL_ID__"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.twitter",
+      "position": [1070, 230],
+      "parameters": {
+        "operation": "reply",
+        "resource": "tweet",
+        "tweetId": "={{ $json[\"id\"] }}",
+        "text": "={{ $json[\"choices\"][0][\"message\"][\"content\"] }}"
+      },
+      "credentials": {
+        "twitterOAuth1Api": "__TWITTER_CREDENTIAL_ID__"
+      }
+    }
+  ],
+  "connections": {
+    "Check Mentions (Every 5 min)": {
+      "main": [
+        [
+          {
+            "node": "Get Mentions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Mentions": {
+      "main": [
+        [
+          {
+            "node": "Generate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

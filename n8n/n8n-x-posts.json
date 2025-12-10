@@ -1,0 +1,122 @@
+{
+  "name": "Auto-Post to X",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Cron Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "triggerTimes": [
+          {
+            "hour": 9,
+            "minute": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "Generate Tweet",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [480, 300],
+      "parameters": {
+        "mode": "chat",
+        "operation": "createChatCompletion",
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You generate short, human-like social posts for X. Keep them under 200 characters, conversational, and avoid hashtags unless really needed."
+          },
+          {
+            "role": "user",
+            "content": "Write a post promoting InOneButton, the one-tap AI meeting assistant."
+          }
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "name": "Post to X",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [720, 300],
+      "credentials": {
+        "twitterOAuth1Api": {
+          "id": "__REPLACE_WITH_YOUR_CREDENTIAL_ID__",
+          "name": "Twitter OAuth Credentials"
+        }
+      },
+      "parameters": {
+        "resource": "tweet",
+        "operation": "create",
+        "text": "={{ $json[\"choices\"][0][\"message\"][\"content\"] }}"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Log to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [960, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "__REPLACE_WITH_GOOGLE_SHEETS_CREDENTIAL_ID__",
+          "name": "Google Sheets OAuth"
+        }
+      },
+      "parameters": {
+        "operation": "append",
+        "sheetId": "__REPLACE_WITH_YOUR_SHEET_ID__",
+        "range": "A:C",
+        "valueInputMode": "RAW",
+        "options": {},
+        "values": [
+          [
+            "={{ $now }}",
+            "={{ $json[\"choices\"][0][\"message\"][\"content\"] }}",
+            "Posted"
+          ]
+        ]
+      }
+    }
+  ],
+  "connections": {
+    "Cron Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Tweet": {
+      "main": [
+        [
+          {
+            "node": "Post to X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to X": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
